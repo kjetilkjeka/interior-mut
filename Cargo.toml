@@ -1,7 +1,16 @@
 [package]
 name = "interior_mut"
-version = "0.0.0"
+version = "0.1.0-beta0"
 authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
+
+license = "Apache-2.0/MIT"
+
+readme = "README.md"
+description = "Abstraction over interior mutable types"
+repository = "https://github.com/kjetilkjeka/interior-mut"
+
+keywords = ["InteriorMut", "RefCell", "Mutex", "RWLock", "mutability"]
+categories = ["embedded", "no-std"]
 
 [features]
 default = ["std"]
