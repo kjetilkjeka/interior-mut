@@ -1,0 +1,10 @@
+[package]
+name = "interior_mut"
+version = "0.0.0"
+authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
+
+[features]
+default = []
+std = []
+
+[dependencies]
