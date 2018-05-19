@@ -1,3 +1,5 @@
+//! A crate for abstracting over interior mutable containers.
+
 #![cfg_attr(not(feature="std"), no_std)]
 
 mod lib {
