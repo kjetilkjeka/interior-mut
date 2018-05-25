@@ -1,6 +1,6 @@
 [package]
 name = "interior_mut"
-version = "0.1.0-beta0"
+version = "0.1.0"
 authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
 
 license = "Apache-2.0/MIT"
