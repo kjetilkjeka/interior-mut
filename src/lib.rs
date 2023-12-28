@@ -25,12 +25,22 @@ pub trait InteriorMut<T: ?Sized> {
         Self: 'a;
 
     /// The error type for immutable borrows.
-    type Error<'a>
+    #[cfg(not(feature = "std"))]
+    type Error<'a>: core::fmt::Debug + core::fmt::Display
+    where
+        Self: 'a;
+    #[cfg(feature = "std")]
+    type Error<'a>: std::error::Error
     where
         Self: 'a;
 
     /// The error type for mutable borrows.
-    type ErrorMut<'a>
+    #[cfg(not(feature = "std"))]
+    type ErrorMut<'a>: core::fmt::Debug + core::fmt::Display
+    where
+        Self: 'a;
+    #[cfg(feature = "std")]
+    type ErrorMut<'a>: std::error::Error
     where
         Self: 'a;
 
