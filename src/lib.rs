@@ -13,7 +13,7 @@ use lib::cell::RefCell;
 use lib::ops::{Deref, DerefMut};
 
 /// A trait for obtaining an immutable or mutable reference on types that allow interior mutability.
-pub trait InteriorMut<T> {
+pub trait InteriorMut<T: ?Sized> {
     /// The immutable reference type.
     type Ref<'a>: Deref<Target = T>
     where
@@ -41,7 +41,7 @@ pub trait InteriorMut<T> {
     fn borrow_int_mut(&self) -> Result<Self::RefMut<'_>, Self::ErrorMut<'_>>;
 }
 
-impl<T> InteriorMut<T> for RefCell<T> {
+impl<T: ?Sized> InteriorMut<T> for RefCell<T> {
     type Ref<'a> = lib::cell::Ref<'a, T> where T: 'a;
     type RefMut<'a> = lib::cell::RefMut<'a, T> where T: 'a;
     type Error<'a> = lib::cell::BorrowError where T: 'a;
@@ -57,7 +57,7 @@ impl<T> InteriorMut<T> for RefCell<T> {
 }
 
 #[cfg(feature = "std")]
-impl<T> InteriorMut<T> for std::sync::Mutex<T> {
+impl<T: ?Sized> InteriorMut<T> for std::sync::Mutex<T> {
     type Ref<'a> = std::sync::MutexGuard<'a, T> where T: 'a;
     type RefMut<'a> = std::sync::MutexGuard<'a, T> where T: 'a;
     type Error<'a> = std::sync::PoisonError<std::sync::MutexGuard<'a, T>> where T: 'a;
@@ -73,7 +73,7 @@ impl<T> InteriorMut<T> for std::sync::Mutex<T> {
 }
 
 #[cfg(feature = "std")]
-impl<T> InteriorMut<T> for std::sync::RwLock<T> {
+impl<T: ?Sized> InteriorMut<T> for std::sync::RwLock<T> {
     type Ref<'a> = std::sync::RwLockReadGuard<'a, T> where T: 'a;
     type RefMut<'a> = std::sync::RwLockWriteGuard<'a, T> where T: 'a;
     type Error<'a> = std::sync::PoisonError<std::sync::RwLockReadGuard<'a, T>> where T: 'a;
