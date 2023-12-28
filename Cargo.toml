@@ -2,6 +2,7 @@
 name = "interior_mut"
 version = "0.1.0"
 authors = ["Kjetil Kjeka <kjetilkjeka@gmail.com>"]
+edition = "2021"
 
 license = "Apache-2.0/MIT"
 
