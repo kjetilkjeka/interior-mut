@@ -97,3 +97,30 @@ impl<T: ?Sized> InteriorMut<T> for std::sync::RwLock<T> {
         self.write()
     }
 }
+
+#[cfg(feature = "std")]
+impl<T: ?Sized, I: InteriorMut<T> + ?Sized> InteriorMut<T> for std::rc::Rc<I> {
+    type Ref<'a> = I::Ref<'a>
+    where
+        Self: 'a, I: 'a;
+
+    type RefMut<'a>=I::RefMut<'a>
+    where
+        Self: 'a, I: 'a;
+
+    type Error<'a>=I::Error<'a>
+    where
+        Self: 'a, I: 'a;
+
+    type ErrorMut<'a>=I::ErrorMut<'a>
+    where
+        Self: 'a, I: 'a;
+
+    fn borrow_int(&self) -> Result<Self::Ref<'_>, Self::Error<'_>> {
+        self.deref().borrow_int()
+    }
+
+    fn borrow_int_mut(&self) -> Result<Self::RefMut<'_>, Self::ErrorMut<'_>> {
+        self.deref().borrow_int_mut()
+    }
+}
