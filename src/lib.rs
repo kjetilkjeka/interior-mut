@@ -51,6 +51,24 @@ pub trait InteriorMut<T: ?Sized> {
     fn borrow_int_mut(&self) -> Result<Self::RefMut<'_>, Self::ErrorMut<'_>>;
 }
 
+/// A reference that can be downgraded to a weak variant.
+/// If a type is only referenced via weak references, it will be dropped.
+pub trait StrongReference<T: ?Sized>: InteriorMut<T> {
+    type Weak: WeakReference<T>;
+
+    /// Return the weak variant of the reference type.
+    fn downgrade(&self) -> Self::Weak;
+}
+
+/// The weak variant of a reference.
+/// If a type is only referenced via weak references, it will be dropped.
+pub trait WeakReference<T: ?Sized> {
+    type Strong: InteriorMut<T>;
+
+    /// Return the strong variant of the reference type, if it has not be dropped already.
+    fn upgrade(&self) -> Option<Self::Strong>;
+}
+
 impl<T: ?Sized> InteriorMut<T> for RefCell<T> {
     type Ref<'a> = lib::cell::Ref<'a, T> where T: 'a;
     type RefMut<'a> = lib::cell::RefMut<'a, T> where T: 'a;
@@ -122,5 +140,23 @@ impl<T: ?Sized, I: InteriorMut<T> + ?Sized> InteriorMut<T> for std::rc::Rc<I> {
 
     fn borrow_int_mut(&self) -> Result<Self::RefMut<'_>, Self::ErrorMut<'_>> {
         self.deref().borrow_int_mut()
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T: ?Sized, I: InteriorMut<T> + ?Sized> StrongReference<T> for std::rc::Rc<I> {
+    type Weak = std::rc::Weak<I>;
+
+    fn downgrade(&self) -> Self::Weak {
+        std::rc::Rc::downgrade(self)
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T: ?Sized, I: InteriorMut<T> + ?Sized> WeakReference<T> for std::rc::Weak<I> {
+    type Strong = std::rc::Rc<I>;
+
+    fn upgrade(&self) -> Option<Self::Strong> {
+        std::rc::Weak::upgrade(self)
     }
 }
